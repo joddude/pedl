@@ -5,6 +5,7 @@ goto description_end
 
 Portable Encrypted Disk Launcher (PEDL)
 Batch script for easy using portable VeraCrypt containers.
+https://github.com/joddude/pedl
 
 Functions
 Mount and unmount container or partition.
