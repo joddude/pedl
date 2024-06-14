@@ -30,7 +30,7 @@ Run program and set "Force close programs" in options.
 
 ## Command line usage
 pedl.bat [filename | /m | /a | /u | /x | /c | /b | /e | /h]  
-&nbsp;&nbsp; filename - Container filename in pedl folder or "devices" (without quotes) for auto mounting.  
+&nbsp;&nbsp; filename - Container filename in pedl folder or volume name or "devices" (without quotes) for auto mounting.  
 &nbsp;&nbsp; /m - Mount default container on default disk.  
 &nbsp;&nbsp; /a - Run autorun items.  
 &nbsp;&nbsp; /u - Unmount default disk.  
