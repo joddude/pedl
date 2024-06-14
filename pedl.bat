@@ -36,7 +36,7 @@ Run program and set "Force close programs" in options.
 
 Command line usage
 pedl.bat [filename | /m | /a | /u | /x | /c | /b | /e | /h]
-  filename     Container filename in pedl folder or "devices" (without quotes) for auto mounting.
+  filename     Container filename in pedl folder or volume name or "devices" (without quotes) for auto mounting.
   /m           Mount default container on default disk.
   /a           Run autorun items.
   /u           Unmount default disk.
@@ -68,7 +68,7 @@ set BLEACHBIT_EXE=BleachBit-Portable\bleachbit_console.exe
 rem Path to USB Disk Ejector
 set USBDISKEJECT_EXE=USBDiskEject\USB_Disk_Eject.exe
 
-rem Container filename in pedl folder or "devices" (without quotes) for auto mounting.
+rem Container filename in pedl folder or volume name or "devices" (without quotes) for auto mounting.
 set DEFAULT_CONTAINER=s.hc
 
 rem Default disk for mount.
@@ -189,7 +189,11 @@ if "%CONTAINER%"=="devices" (
   %VERACRYPT_EXE% /q /b /l %DISK:~0,1% /a devices
 ) else (
   echo Mounting %CONTAINER% on disk %DISK%
-  %VERACRYPT_EXE% /q /b /l %DISK:~0,1% /v "%CONTAINER%"
+  if "%CONTAINER:~0,10%"=="\\?\Volume" (
+    %VERACRYPT_EXE% /q /b /l %DISK:~0,1% /v %CONTAINER%
+  ) else (
+    %VERACRYPT_EXE% /q /b /l %DISK:~0,1% /v "%CONTAINER%"
+  )
 )
 echo Waiting for disk %DISK%
 call :wait_disk_mount "%DISK%" %WAIT_MOUNT_TIME%
@@ -239,6 +243,7 @@ exit /b %ERRORLEVEL%
 rem ----------------------------------------------------------[Change timedate]
 :change_timedate
 if "%CONTAINER%"=="devices" exit /b 1
+if "%CONTAINER:~0,10%"=="\\?\Volume" exit /b 1
 echo Change datetime for %CONTAINER%
 copy /b %CONTAINER%+,, > nul
 exit /b %ERRORLEVEL%
@@ -254,6 +259,7 @@ exit /b 0
 rem -------------------------------------------------------------------[Backup]
 :backup
 if "%CONTAINER%"=="devices" exit /b 2
+if "%CONTAINER:~0,10%"=="\\?\Volume" exit /b 1
 if /I not "%CONTAINER%"=="%DEFAULT_CONTAINER%" exit /b 3
 choice /T %BACKUP_WAIT_TIME_CHOICE% /D %BACKUP_DEFAULT_CHOICE% /M "Backup %DEFAULT_CONTAINER%? Default: %BACKUP_DEFAULT_CHOICE%"
 if errorlevel 2 exit /b 1
@@ -285,7 +291,7 @@ rem ---------------------------------------------------------------------[Help]
 echo.
 echo Command line usage
 echo pedl.bat [filename ^| /m ^| /a ^| /u ^| /x ^| /c ^| /b ^| /e ^| /h]
-echo   filename     Container filename in pedl folder or "devices" (without quotes) for auto mounting.
+echo   filename     Container filename in pedl folder or volume name or "devices" (without quotes) for auto mounting.
 echo   /m           Mount default container on default disk.
 echo   /a           Run autorun items.
 echo   /u           Unmount default disk.
